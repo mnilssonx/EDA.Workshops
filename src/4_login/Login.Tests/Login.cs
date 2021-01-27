@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Login.Tests
 {
@@ -29,8 +28,7 @@ namespace Login.Tests
     {
         public static bool TooManyAttempts(this IEnumerable<IEvent> events, Func<DateTime> timeProvider)
             => events
-            .OfType<AuthenticationAttemptFailed>()
-            //TODO
-            .Count() <= 3;
+                .OfType<AuthenticationAttemptFailed>()
+                .Count(e => e.Time > timeProvider().AddMinutes(-15)) >= 3;
     }
 }

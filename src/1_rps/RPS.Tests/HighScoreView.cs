@@ -1,10 +1,20 @@
-﻿namespace RPS.Tests
+﻿using System;
+using System.Collections.Generic;
+
+namespace RPS.Tests
 {
     public class HighScoreView
     {
-        public HighScoreView When(IEvent @event) => this;
-        public ScoreRow[] Rows { get; set; }
+        private IDictionary<Guid, List<IEvent>> Games = new Dictionary<Guid, List<IEvent>>();
 
+        public HighScoreView When(IEvent @event) => this;
+
+        //public HighScoreView When(RoundEnded roundEnded)
+        //{
+            
+        //}
+
+        public ScoreRow[] Rows { get; set; }
         public class ScoreRow
         {
             public int Rank { get; set; }

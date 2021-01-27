@@ -4,6 +4,17 @@
     {
         public GameState When(IEvent @event) => this;
 
+        public GameState When(GameCreated gameCreated)
+        {
+            CreatorId = gameCreated.PlayerId;
+            Status = GameStatus.ReadyToStart;
+            return this;
+        }
+
+        public string CreatorId { get; set; }
+
+        public GameStatus Status { get; set; }
+
         public enum GameStatus
         {
             None = 0,

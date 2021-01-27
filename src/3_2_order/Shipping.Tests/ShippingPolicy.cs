@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Shipping.Tests
 {
@@ -11,8 +12,10 @@ namespace Shipping.Tests
 
         public void When(IEvent @event)
         {
-            var cmd = ShippingPolicy.When((dynamic)@event);
+            history.Add(@event);
             var state = history.Rehydrate<Order>();
+
+            var cmd = ShippingPolicy.When((dynamic)@event);
             history.AddRange(OrderBehavior.Handle(state, (dynamic)cmd));
         }
 
@@ -29,20 +32,34 @@ namespace Shipping.Tests
     public static class OrderBehavior
     {
         public static IEnumerable<IEvent> Handle(this Order order, CompletePayment command)
-            => new[] { new PaymentComplete() };
+        {
+            if (order.Packed && order.Payed)
+                yield return new GoodsShipped();
+        }
 
         public static IEnumerable<IEvent> Handle(this Order order, CompletePacking command)
-            => new[] { new PackingComplete() };
+        {
+            if (order.Packed && order.Payed)
+                yield return new GoodsShipped();
+        }
     }
 
     public class Order
     {
-        public bool Paid;
+        public bool Payed;
         public bool Packed;
 
         public Order When(IEvent @event) => this;
 
-        public Order When(PaymentReceived @event) => this;
-        public Order When(GoodsPicked @event) => this;
+        public Order When(PaymentReceived @event)
+        {
+            Payed = true;
+            return this;
+        }
+        public Order When(GoodsPicked @event)
+        {
+            Packed = true;
+            return this;
+        }
     }
 }
