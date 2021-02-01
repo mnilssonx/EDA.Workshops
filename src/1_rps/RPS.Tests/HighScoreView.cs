@@ -9,10 +9,11 @@ namespace RPS.Tests
 
         public HighScoreView When(IEvent @event) => this;
 
-        //public HighScoreView When(RoundEnded roundEnded)
-        //{
-            
-        //}
+        public HighScoreView When(RoundEnded roundEnded)
+        {
+            // TODO: ...
+            return this;
+        }
 
         public ScoreRow[] Rows { get; set; }
         public class ScoreRow
